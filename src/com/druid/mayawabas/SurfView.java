@@ -38,8 +38,7 @@ public class SurfView extends SurfaceView implements SurfaceHolder.Callback {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN: {
-                    Thread workthread = new Thread(new RenderSurfaceView());
-                    workthread.start();
+                    
                 }
                     break;
                 }
@@ -52,28 +51,27 @@ public class SurfView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d(null, " -- -- surfaceChanged, width:" + width + ", height:" + height);
         mSolidPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
         mSolidPaint.setAntiAlias(true);
         mSolidPaint.setStyle(Paint.Style.FILL);
         mSolidPaint.setARGB(255, 255, 255, 255);
 
         mIttar = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-
+        Canvas tmpoCanvas = new Canvas(mIttar);
+        tmpoCanvas.drawPaint(mSolidPaint);
+        
         Thread workthread = new Thread(new RenderSurfaceView());
         workthread.start();
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(null, " -- -- surfaceCreated,");
         matrix.reset();
         savedMatrix.reset();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(null, " -- -- surfaceDestroyed,");
         mIttar.recycle();
     }
 
@@ -81,7 +79,6 @@ public class SurfView extends SurfaceView implements SurfaceHolder.Callback {
     class RenderSurfaceView implements Runnable {
 
         public void run() {
-            Log.d(null, " -- -- RenderSurfaceView");
             Canvas canvas = null;
             try {
 
